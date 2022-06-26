@@ -21,7 +21,7 @@ class QuizView extends Component {
 
   componentDidMount() {
     $.ajax({
-      url: `/categories`, //TODO: update request URL
+      url: `${process.env.REACT_APP_BASEURL}/categories`, //TODO: update request URL
       type: 'GET',
       success: (result) => {
         this.setState({ categories: result.categories });
@@ -49,7 +49,7 @@ class QuizView extends Component {
     }
 
     $.ajax({
-      url: '/quizzes', //TODO: update request URL
+      url: `${process.env.REACT_APP_BASEURL}/quizzes`, //TODO: update request URL
       type: 'POST',
       dataType: 'json',
       contentType: 'application/json',
@@ -58,7 +58,7 @@ class QuizView extends Component {
         quiz_category: this.state.quizCategory,
       }),
       xhrFields: {
-        withCredentials: true,
+        withCredentials: false,
       },
       crossDomain: true,
       success: (result) => {
