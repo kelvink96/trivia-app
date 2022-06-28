@@ -49,6 +49,8 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
+        self.assertTrue(data['categories'])
+        self.assertTrue(data['total_categories'], len(data['categories']) > 0)
 
     # test get questions
     def test_paginated_questions(self):
@@ -57,6 +59,8 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data["success"], True)
+        self.assertTrue(data['questions'])
+        self.assertTrue(data['total_questions'])
 
     # 404 when page length beyond limit
     def test_404_exceeded_page_length(self):
