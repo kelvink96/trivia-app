@@ -80,7 +80,6 @@ def create_app(test_config=None):
         questions = Question.query.order_by(Question.id).all()
         current_questions = paginate_questions(request, questions)
 
-        print(current_questions)
         if not len(current_questions):
             abort(404)
         try:
@@ -222,7 +221,8 @@ def create_app(test_config=None):
                 'total_questions': len(questions),
                 'current_category': category_id
             })
-        except:
+        except Exception as e:
+            print(e)
             abort(400)
 
     """
@@ -242,26 +242,33 @@ def create_app(test_config=None):
         try:
             body = request.get_json()
 
-            if not ('quiz_category' in body and 'previous_questions' in body):
-                abort(422)
-
             category = body.get('quiz_category')
             previous_questions = body.get('previous_questions')
 
-            if category['type'] == 'click':
-                available_questions = Question.query.filter(
-                    Question.id.notin_((previous_questions))).all()
+            print(previous_questions)
+            if category['id'] == 0:
+                questions = Question.query.filter(Question.id.not_in(previous_questions)).all()
             else:
-                available_questions = Question.query.filter_by(
-                    category=category['id']).filter(Question.id.notin_((previous_questions))).all()
+                questions = Question.query.filter(Question.id.notin_(previous_questions),
+                                                  Question.category == category['id']).all()
 
-            random_question = available_questions[random.randrange(
-                0, len(available_questions))].format() if len(available_questions) > 0 else None
+            questions = [question.format() for question in questions]
 
-            return jsonify({
-                'success': True,
-                'question': random_question
-            })
+            # check if there is a question
+            if len(questions) > 0:
+                x = random.choice(questions)
+
+                return jsonify({
+                    'success': True,
+                    'question': x,
+                    'previousQuestions': previous_questions
+                })
+            else:
+                return jsonify({
+                    'success': True,
+                    'message': "game over"
+                }), 200
+
         except Exception as e:
             print(e)
             abort(422)

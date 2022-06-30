@@ -24,7 +24,7 @@ class TriviaTestCase(unittest.TestCase):
         self.new_question_error = {"question": "Which is the highest mountain in the world", "answer": "Mount Everest",
                                    "category": "Geography", "difficulty": "3"}
         self.new_search = {"searchTerm": "What boxer's original name is Cassius Clay?"}
-        self.new_quizzes = {'previous_questions': [], 'quiz_category': {'type': 'Entertainment', 'id': 5}}
+        self.new_quizzes = {'previous_questions': [], 'quiz_category': {'type': 'Science', 'id': 1}}
 
         # binds the app to the current context
         with self.app.app_context():
@@ -152,7 +152,7 @@ class TriviaTestCase(unittest.TestCase):
 
     # try to get questions from an unknown category
     def test_404_get_questions_by_category(self):
-        response = self.client().get('/categories/a/questions')
+        response = self.client().get('/categories/1000/questions')
         data = json.loads(response.data)
 
         # check status code, false success message
@@ -167,6 +167,8 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+        self.assertTrue(data['question'])
+        self.assertTrue(data['previousQuestions'])
 
     # test if error occurs when playing quizzes
     def test_422_play_quiz(self):
