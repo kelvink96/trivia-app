@@ -40,7 +40,9 @@ def create_app(test_config=None):
     @app.after_request
     def after_request(response):
         response.headers.add('Access-Control-Allow-Headers', '*')
-        response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+        response.headers.add(
+            'Access-Control-Allow-Methods',
+            'GET,PUT,POST,DELETE,OPTIONS')
         return response
 
     """
@@ -111,19 +113,19 @@ def create_app(test_config=None):
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
     def delete_question(question_id):
         try:
-            question = Question.query.filter(Question.id == question_id).one_or_none()
+            question = Question.query.filter(
+                Question.id == question_id).one_or_none()
 
             if question is None:
                 abort(404)
 
             question.delete()
 
-            return jsonify({
-                'success': True,
-                'deleted': question_id,
-                'questions': paginate_questions(request, Question.query.order_by(Question.id).all()),
-                'total_questions': len(Question.query.all())
-            })
+            return jsonify({'success': True,
+                            'deleted': question_id,
+                            'questions': paginate_questions(request,
+                                                            Question.query.order_by(Question.id).all()),
+                            'total_questions': len(Question.query.all())})
 
         except Exception as e:
             print(e)
@@ -134,7 +136,7 @@ def create_app(test_config=None):
     Create an endpoint to POST a new question,
     which will require the question and answer text,
     category, and difficulty score.
-    
+
     TEST: When you submit a question on the "Add" tab,
     the form will clear and the question will appear at the end of the last page
     of the questions list in the "List" tab.
@@ -155,17 +157,19 @@ def create_app(test_config=None):
             abort(422)
 
         try:
-            question = Question(question=new_question, answer=new_answer, category=new_category,
-                                difficulty=new_difficulty)
+            question = Question(
+                question=new_question,
+                answer=new_answer,
+                category=new_category,
+                difficulty=new_difficulty)
             question.insert()
 
-            return jsonify({
-                'success': True,
-                'created': question.id,
-                'question_created': question.format(),
-                'questions': paginate_questions(request, Question.query.order_by(Question.id).all()),
-                'total_questions': len(Question.query.all())
-            })
+            return jsonify({'success': True,
+                            'created': question.id,
+                            'question_created': question.format(),
+                            'questions': paginate_questions(request,
+                                                            Question.query.order_by(Question.id).all()),
+                            'total_questions': len(Question.query.all())})
         except Exception as e:
             print(e)
             abort(422)
@@ -188,7 +192,8 @@ def create_app(test_config=None):
 
         try:
             if search_term:
-                search_results = Question.query.filter(Question.question.ilike(f'%{search_term}%')).all()
+                search_results = Question.query.filter(
+                    Question.question.ilike(f'%{search_term}%')).all()
 
                 return jsonify({
                     'success': True,
@@ -213,7 +218,8 @@ def create_app(test_config=None):
     @app.route('/categories/<int:category_id>/questions', methods=['GET'])
     def get_questions_by_category(category_id):
         try:
-            questions = Question.query.filter(Question.category == str(category_id)).all()
+            questions = Question.query.filter(
+                Question.category == str(category_id)).all()
 
             return jsonify({
                 'success': True,
@@ -247,10 +253,12 @@ def create_app(test_config=None):
 
             print(previous_questions)
             if category['id'] == 0:
-                questions = Question.query.filter(Question.id.not_in(previous_questions)).all()
+                questions = Question.query.filter(
+                    Question.id.not_in(previous_questions)).all()
             else:
-                questions = Question.query.filter(Question.id.notin_(previous_questions),
-                                                  Question.category == category['id']).all()
+                questions = Question.query.filter(
+                    Question.id.notin_(previous_questions),
+                    Question.category == category['id']).all()
 
             questions = [question.format() for question in questions]
 
