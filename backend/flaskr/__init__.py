@@ -54,6 +54,10 @@ def create_app(test_config=None):
     @app.route('/categories', methods=['GET'])
     def get_categories():
         categories = Category.query.all()
+
+        if not len(categories):
+            abort(404)
+
         categories_dict = {}
         for category in categories:
             categories_dict[category.id] = category.type

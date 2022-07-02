@@ -64,6 +64,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(data['categories'])
         self.assertTrue(data['total_categories'], len(data['categories']) > 0)
 
+    def test_404_categories(self):
+        res = self.client().get("/category")
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data["success"], False)
+
     # test get questions
     def test_paginated_questions(self):
         res = self.client().get("/questions")
@@ -104,6 +111,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(question, None)
         # check for decrease in questions
         self.assertTrue(len(questions_before) > len(questions_after))
+
+    def test_404_delete_question(self):
+        res = self.client().delete(f'/questions/abc')
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 404)
+        self.assertEqual(data['success'], False)
 
     # test create a question
     def test_create_new_question(self):
